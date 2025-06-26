@@ -16,7 +16,13 @@
         </div>
         <div class="budget-expenses">
           <div class="budget-expenses__text">EXPENSES</div>
-          <div class="budget-expenses__value">- {{ formattedExpenses }}</div>
+          <div class="budget-expenses__value">
+            - {{ formattedExpenses }}
+            <span class="budget-expenses__percentage" v-if="expensesPercentage !== 'N/A'">
+              {{ expensesPercentage }}%
+            </span>
+            <span class="budget-expenses__percentage" v-else>..</span>
+          </div>
         </div>
       </div>
     </div>
@@ -43,10 +49,10 @@ export default {
     currentMonthYear() {
       const date = new Date();
       const options = { month: 'long', year: 'numeric' };
-      return date.toLocaleDateString('en-US', options); // Ou 'fr-FR' si vous préférez en français
+      // Vous pouvez choisir 'fr-FR' pour le français, ou 'en-US' pour l'anglais
+      return date.toLocaleDateString('en-US', options); 
     },
     formattedBudget() {
-      // Formatage du budget pour afficher les décimales et le signe
       return this.totalBudget.toFixed(2);
     },
     formattedIncome() {
@@ -54,6 +60,15 @@ export default {
     },
     formattedExpenses() {
       return this.totalExpenses.toFixed(2);
+    },
+    expensesPercentage() {
+      // Si le revenu est zéro, on ne peut pas calculer un pourcentage valide
+      if (this.totalIncome === 0) {
+        return 'N/A';
+      }
+      // Calcul du pourcentage : (dépenses / revenu total) * 100
+      // Math.round pour arrondir à l'entier le plus proche, comme dans l'exemple
+      return Math.round((this.totalExpenses / this.totalIncome) * 100);
     }
   }
 }
@@ -113,10 +128,8 @@ export default {
   min-width: 20rem; /* Pour éviter que le texte ne se déplace trop si le chiffre est petit */
   display: inline-block; /* Pour que le background-color s'applique bien */
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  transition: background-color 0.3s ease; /* Transition pour le changement de couleur */
 }
-
-
-
 
 .bottom {
   display: flex;
@@ -155,7 +168,18 @@ export default {
 
 .budget-income__value,
 .budget-expenses__value {
-  font-size: 2rem;
+  font-size: 1.8rem;
   font-weight: 500;
+  display: flex; /* Permet d'aligner le pourcentage */
+  align-items: baseline; /* Aligne le texte sur la ligne de base */
+  gap: 10px; /* Espace entre la valeur et le pourcentage */
+}
+
+.budget-expenses__percentage {
+  font-size: 1.2rem; /* Taille plus petite pour le pourcentage */
+  font-weight: 400;
+  background-color: rgba(0, 0, 0, 0.2); /* Fond semi-transparent pour le pourcentage */
+  padding: 0.3rem 0.6rem;
+  border-radius: 3px;
 }
 </style>
