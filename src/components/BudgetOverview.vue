@@ -173,6 +173,7 @@ export default {
   display: flex; /* Permet d'aligner le pourcentage */
   align-items: baseline; /* Aligne le texte sur la ligne de base */
   gap: 10px; /* Espace entre la valeur et le pourcentage */
+  white-space: nowrap; /* Empêche le retour à la ligne */
 }
 
 .budget-expenses__percentage {
