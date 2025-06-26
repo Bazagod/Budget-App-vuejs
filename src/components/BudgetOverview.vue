@@ -5,7 +5,7 @@
       <div class="budget-title">
         Available Budget in {{ currentMonthYear }}
       </div>
-      <div class="budget-value" :class="{ 'budget-value--red': totalBudget < 0, 'budget-value--green': totalBudget > 0 }">
+      <div class="budget-value">
         {{ formattedBudget }}
       </div>
 
