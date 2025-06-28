@@ -7,8 +7,7 @@
           v-for="item in incomeItems"
           :key="item.id"
           :item="item"
-          @delete-item="$emit('delete-item', $event)"
-        />
+          />
       </div>
     </div>
 
@@ -19,53 +18,43 @@
           v-for="item in expenseItems"
           :key="item.id"
           :item="item"
-          @delete-item="$emit('delete-item', $event)"
         />
       </div>
     </div>
   </div>
 </template>
 
-<script>
+<script setup>
 import TransactionItem from './TransactionItem.vue';
+import { useStore} from 'vuex';
+import { computed } from 'vue';
 
-export default {
-  name: 'TransactionsList',
-  components: {
-    TransactionItem
-  },
-  props: {
-    transactions: {
-      type: Array,
-      required: true
-    }
-  },
-  computed: {
-    incomeItems() {
-      return this.transactions.filter(item => item.type === 'inc');
-    },
-    expenseItems() {
-      return this.transactions.filter(item => item.type === 'exp');
-    }
-  }
-}
+const store = useStore(); 
+const transactions = computed(() => store.state.transactions);
+const incomeItems = computed(() => 
+  transactions.value.filter(item => item.type === 'inc')
+);
+
+const expenseItems = computed(() =>
+  transactions.value.filter(item => item.type === 'exp')
+);
 </script>
 
 <style scoped>
 .container {
   width: 100%;
-  max-width: 90rem; /* Largeur maximale pour le contenu */
+  max-width: 90rem;
   display: flex;
-  flex-wrap: wrap; /* Permet aux colonnes de passer à la ligne sur petits écrans */
+  flex-wrap: wrap;
   justify-content: center;
-  gap: 3rem; /* Espacement entre les colonnes */
-  padding: 0 2rem; /* Padding horizontal */
+  gap: 3rem;
+  padding: 0 2rem;
 }
 
 .income,
 .expenses {
-  flex: 1; /* Prend l'espace disponible */
-  min-width: 30rem; /* Largeur minimale avant de passer à la ligne */
+  flex: 1;
+  min-width: 30rem;
 }
 
 h2 {
@@ -87,6 +76,6 @@ h2 {
 .expenses__list {
   display: flex;
   flex-direction: column;
-  gap: 1rem; /* Espacement entre les items de la liste */
+  gap: 1rem;
 }
 </style>

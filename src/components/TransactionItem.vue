@@ -15,34 +15,30 @@
 </template>
 
 <script>
-// Pour Font Awesome, assurez-vous d'avoir installé les packages et configuré main.js
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
-import { faTimesCircle } from '@fortawesome/free-solid-svg-icons';
-import { library } from '@fortawesome/fontawesome-svg-core';
-
-library.add(faTimesCircle);
+import { useStore } from 'vuex';
 
 export default {
   name: 'TransactionItem',
-  components: {
-    FontAwesomeIcon
-  },
   props: {
     item: {
       type: Object,
       required: true
     }
   },
+  setup() {
+    const store = useStore();
+    return { store };
+  },
   computed: {
     formattedValue() {
-      // Ajoute le signe et formate en décimales
       const sign = this.item.type === 'inc' ? '+' : '-';
       return `${sign} ${this.item.value.toFixed(2)}`;
     }
   },
   methods: {
     deleteItem() {
-      this.$emit('delete-item', this.item.id); // Émet l'ID de l'élément à supprimer
+      // Dispatche l'action 'deleteTransaction' au lieu d'émettre un événement
+      this.store.dispatch('deleteTransaction', this.item.id);
     }
   }
 }
@@ -57,7 +53,7 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05); /* Légère ombre */
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
   transition: transform 0.2s, box-shadow 0.2s;
 }
 
@@ -69,7 +65,7 @@ export default {
 .item__description {
   font-size: 1.6rem;
   color: #555;
-  flex: 1; /* Prend l'espace restant */
+  flex: 1;
 }
 
 .right {
@@ -82,7 +78,7 @@ export default {
   font-size: 1.6rem;
   font-weight: 500;
   text-align: right;
-  min-width: 8rem; /* Pour aligner les valeurs */
+  min-width: 8rem;
 }
 
 .item__value--inc {
@@ -98,21 +94,21 @@ export default {
   color: #ccc;
   cursor: pointer;
   transition: color 0.2s;
-  opacity: 0; /* Caché par défaut */
-  visibility: hidden; /* Caché pour l'accessibilité */
+  opacity: 0;
+  visibility: hidden;
 }
 
 .item:hover .item__delete {
   opacity: 1;
   visibility: visible;
-  color: #FF5049; /* Devient rouge au survol de l'élément parent */
+  color: #FF5049;
 }
 
 .item__delete--btn {
   background: none;
   border: none;
   cursor: pointer;
-  color: inherit; /* Utilise la couleur du parent .item__delete */
+  color: inherit;
   outline: none;
 }
 

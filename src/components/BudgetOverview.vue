@@ -29,62 +29,41 @@
   </div>
 </template>
 
-<script>
-export default {
-  name: 'BudgetOverview',
-  props: {
-    totalIncome: {
-      type: Number,
-      required: true
-    },
-    totalExpenses: {
-      type: Number,
-      required: true
-    }
-  },
-  computed: {
-    totalBudget() {
-      return this.totalIncome - this.totalExpenses;
-    },
-    currentMonthYear() {
-      const date = new Date();
-      const options = { month: 'long', year: 'numeric' };
-      // Vous pouvez choisir 'fr-FR' pour le français, ou 'en-US' pour l'anglais
-      return date.toLocaleDateString('en-US', options); 
-    },
-    formattedBudget() {
-      return this.totalBudget.toFixed(2);
-    },
-    formattedIncome() {
-      return this.totalIncome.toFixed(2);
-    },
-    formattedExpenses() {
-      return this.totalExpenses.toFixed(2);
-    },
-    expensesPercentage() {
-      // Si le revenu est zéro, on ne peut pas calculer un pourcentage valide
-      if (this.totalIncome === 0) {
-        return 'N/A';
-      }
-      // Calcul du pourcentage : (dépenses / revenu total) * 100
-      // Math.round pour arrondir à l'entier le plus proche, comme dans l'exemple
-      return Math.round((this.totalExpenses / this.totalIncome) * 100);
-    }
-  }
-}
+<script setup>
+import { computed } from 'vue';
+import { useStore } from 'vuex'; 
+
+const store = useStore(); 
+
+// Accéder aux getters du store
+const totalIncome = computed(() => store.getters.totalIncome);
+const totalExpenses = computed(() => store.getters.totalExpenses);
+const totalBudget = computed(() => store.getters.totalBudget); 
+const expensesPercentage = computed(() => store.getters.expensesPercentage); 
+
+
+const currentMonthYear = computed(() => {
+  const date = new Date();
+  const options = { month: 'long', year: 'numeric' };
+  return date.toLocaleDateString('en-US', options); 
+});
+
+const formattedBudget = computed(() => totalBudget.value.toFixed(2));
+const formattedIncome = computed(() => totalIncome.value.toFixed(2));
+const formattedExpenses = computed(() => totalExpenses.value.toFixed(2));
 </script>
 
 <style scoped>
 .budget-header {
   width: 100%;
-  height: 40vh; /* Hauteur relative pour la bannière */
+  height: 40vh;
   position: relative;
   overflow: hidden;
   display: flex;
   justify-content: center;
   align-items: center;
   margin-bottom: 3rem;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Petite ombre */
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
 .header-background {
@@ -93,10 +72,10 @@ export default {
   left: 0;
   width: 100%;
   height: 100%;
-  background-image: url('/home/bazagod/budget-app/src/assets/bg.jpg'); 
+  background-image: url('../assets/bg.jpg');
   background-size: cover;
   background-position: center;
-  filter: brightness(70%); /* Assombrit un peu l'image pour la lisibilité du texte */
+  filter: brightness(70%);
   z-index: 1;
 }
 
@@ -110,7 +89,7 @@ export default {
   gap: 2rem;
   padding: 2rem;
   width: 100%;
-  max-width: 50rem; /* Limite la largeur du contenu central */
+  max-width: 50rem;
 }
 
 .budget-title {
@@ -125,10 +104,10 @@ export default {
   margin-bottom: 2rem;
   padding: 1rem 2rem;
   border-radius: 5px;
-  min-width: 20rem; /* Pour éviter que le texte ne se déplace trop si le chiffre est petit */
-  display: inline-block; /* Pour que le background-color s'applique bien */
+  min-width: 20rem;
+  display: inline-block;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-  transition: background-color 0.3s ease; /* Transition pour le changement de couleur */
+  transition: background-color 0.3s ease;
 }
 
 .bottom {
@@ -146,16 +125,16 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  flex: 1; /* Distribue l'espace équitablement */
+  flex: 1;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
 .budget-income {
-  background-color: #28B9B9; /* Vert */
+  background-color: #28B9B9;
 }
 
 .budget-expenses {
-  background-color: #FF5049; /* Rouge */
+  background-color: #FF5049;
 }
 
 .budget-income__text,
@@ -170,16 +149,16 @@ export default {
 .budget-expenses__value {
   font-size: 1.8rem;
   font-weight: 500;
-  display: flex; /* Permet d'aligner le pourcentage */
-  align-items: baseline; /* Aligne le texte sur la ligne de base */
-  gap: 10px; /* Espace entre la valeur et le pourcentage */
-  white-space: nowrap; /* Empêche le retour à la ligne */
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  white-space: nowrap;
 }
 
 .budget-expenses__percentage {
-  font-size: 1.2rem; /* Taille plus petite pour le pourcentage */
+  font-size: 1.2rem;
   font-weight: 400;
-  background-color: rgba(0, 0, 0, 0.2); /* Fond semi-transparent pour le pourcentage */
+  background-color: rgba(0, 0, 0, 0.2);
   padding: 0.3rem 0.6rem;
   border-radius: 3px;
 }

@@ -1,14 +1,15 @@
-import { createApp } from 'vue'
-import App from './App.vue'
+import { createApp } from 'vue';
+import App from './App.vue';
+import store from './store';
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+import { library } from '@fortawesome/fontawesome-svg-core';
+import { faCheckCircle, faTimesCircle } from '@fortawesome/free-solid-svg-icons';
 
-// Importations Font Awesome
-import { library } from '@fortawesome/fontawesome-svg-core'
-import { faCheckCircle, faTimesCircle } from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+library.add(faCheckCircle, faTimesCircle);
 
-// Ajoutez toutes les icônes à la bibliothèque
-library.add(faCheckCircle, faTimesCircle)
+const app = createApp(App);
 
-const app = createApp(App)
-app.component('font-awesome-icon', FontAwesomeIcon) 
-app.mount('#app')
+app.use(store); 
+app.component('font-awesome-icon', FontAwesomeIcon);
+
+app.mount('#app');
