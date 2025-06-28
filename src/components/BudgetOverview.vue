@@ -5,23 +5,27 @@
       <div class="budget-title">
         Available Budget in {{ currentMonthYear }}
       </div>
+      <div v-if="isLoading" class="loading-message">Chargement du budget...</div>
+      <div v-else-if="apiError" class="error-message">{{ apiError }}</div>
+      <div v-else>
       <div class="budget-value">
-        {{ formattedBudget }}
-      </div>
-
-      <div class="bottom">
-        <div class="budget-income">
-          <div class="budget-income__text">INCOME</div>
-          <div class="budget-income__value">+ {{ formattedIncome }}</div>
+          {{ formattedBudget }}
         </div>
-        <div class="budget-expenses">
-          <div class="budget-expenses__text">EXPENSES</div>
-          <div class="budget-expenses__value">
-            - {{ formattedExpenses }}
-            <span class="budget-expenses__percentage" v-if="expensesPercentage !== 'N/A'">
-              {{ expensesPercentage }}%
-            </span>
-            <span class="budget-expenses__percentage" v-else>..</span>
+
+        <div class="bottom">
+          <div class="budget-income">
+            <div class="budget-income__text">INCOME</div>
+            <div class="budget-income__value">+ {{ formattedIncome }}</div>
+          </div>
+          <div class="budget-expenses">
+            <div class="budget-expenses__text">EXPENSES</div>
+            <div class="budget-expenses__value">
+              - {{ formattedExpenses }}
+              <span class="budget-expenses__percentage" v-if="expensesPercentage !== 'N/A'">
+                {{ expensesPercentage }}%
+              </span>
+              <span class="budget-expenses__percentage" v-else>..</span>
+            </div>
           </div>
         </div>
       </div>
@@ -30,7 +34,7 @@
 </template>
 
 <script setup>
-import { computed } from 'vue';
+import { computed, onMounted } from 'vue';
 import { useStore } from 'vuex';
 
 const store = useStore(); 
@@ -39,7 +43,9 @@ const store = useStore();
 const totalIncome = computed(() => store.getters.totalIncome);
 const totalExpenses = computed(() => store.getters.totalExpenses);
 const totalBudget = computed(() => store.getters.totalBudget); 
-const expensesPercentage = computed(() => store.getters.expensesPercentage); 
+const expensesPercentage = computed(() => store.getters.expensesPercentage);
+const isLoading = computed(() => store.getters.getIsLoading);
+const apiError = computed(() => store.getters.getApiError);
 
 
 const currentMonthYear = computed(() => {
@@ -51,6 +57,10 @@ const currentMonthYear = computed(() => {
 const formattedBudget = computed(() => totalBudget.value.toFixed(2));
 const formattedIncome = computed(() => totalIncome.value.toFixed(2));
 const formattedExpenses = computed(() => totalExpenses.value.toFixed(2));
+
+onMounted(() => {
+  store.dispatch('fetchTransactions');
+});
 </script>
 
 <style scoped>
@@ -161,5 +171,17 @@ const formattedExpenses = computed(() => totalExpenses.value.toFixed(2));
   background-color: rgba(0, 0, 0, 0.2);
   padding: 0.3rem 0.6rem;
   border-radius: 3px;
+}
+.loading-message, .error-message {
+  font-size: 1.8rem;
+  font-weight: 500;
+  color: #fff;
+  padding: 2rem;
+  text-align: center;
+}
+
+.error-message {
+  background-color: rgba(255, 0, 0, 0.6);
+  border-radius: 5px;
 }
 </style>
